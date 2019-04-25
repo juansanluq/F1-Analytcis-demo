@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { DriversService } from '../../services/drivers/drivers.service';
-import { driver } from '../../services/utils';
 import { Subject, Observable, of } from 'rxjs';
 import wiki from 'wikijs';
+import { DemonymsService } from '../../services/demonyms/demonyms.service';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.reducer';
+import { LoadDriverOTDAction } from '../../store/actions/drivers.actions';
 
 @Component({
   selector: 'app-dotd',
@@ -16,15 +19,20 @@ export class DotdComponent implements OnInit {
   winsCount;
   podiumsCount;
   polesCount;
-  info;
+  info = 'Lamentablemente no se ha podido obtener información de este piloto';
+  countryCode;
   image: any = '../../../assets/images/image_placeholder.png';
 
-  constructor(private driversService: DriversService) { }
+  constructor(private driversService: DriversService, private demonymsService: DemonymsService,
+    private store: Store<AppState>) { }
 
   ngOnInit() {
     this.driversService.getDriverOfTheDay()
       .subscribe(driver => {
         this.driverOTD = driver;
+        this.store.dispatch(new LoadDriverOTDAction(this.driverOTD));
+
+        this.countryCode = this.demonymsService.getCountryCode(this.driverOTD.nationality);
 
         this.driversService.getChampionshipsbyDriverId(this.driverOTD.driverId)
           .subscribe(championships => {
@@ -40,12 +48,11 @@ export class DotdComponent implements OnInit {
           .subscribe(podiums => {
             this.podiumsCount = podiums;
           });
-        console.log(this.driverOTD);
         this.driversService.getPolesbyDriverId(this.driverOTD.driverId)
           .subscribe(poles => this.polesCount = poles);
 
         this.driversService.getInfo(this.driverOTD)
-          .subscribe(info => this.info = info);
+          .subscribe((info: any) => this.info = info);
 
         this.driversService.getImage(this.driverOTD)
           .subscribe(image => {
