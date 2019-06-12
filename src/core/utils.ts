@@ -1,10 +1,11 @@
 import { Driver } from 'selenium-webdriver/opera';
+import { ChartOptions } from 'chart.js';
 
 export function mapFinishingPositions(Results: any[]) {
   let resultados = new Array();
   Results.map(item => {
     item.Results.map(result => {
-      if (result.positionText != 'R' && result.positionText != 'F' && result.positionText != 'D' && result.positionText != 'N' && result.positionText != 'W') {
+      if (result.positionText != 'R' && result.positionText != 'F' && result.positionText != 'D' && result.positionText != 'N' && result.positionText != 'W' && result.positionText != 'E') {
         resultados.push(result.positionText);
       };
     })
@@ -16,7 +17,9 @@ export function mapGridPositions(Results: any[]) {
   let resultados = new Array();
   Results.map(item => {
     item.Results.map(result => {
-      resultados.push(result.grid);
+      if (result.grid != 0) {
+        resultados.push(result.grid);
+      }
     });
   });
   return countPositions(resultados);
@@ -39,7 +42,7 @@ function countPositions(arr) {
   return [a, b];
 }
 
-export function setChartOptions(title, xlabel, ylabel, yStepSize, yReverse, legendPointStyle, xTicksDecoration?, yTicksDecoration?) {
+export function setChartOptions(title, xlabel, ylabel, yStepSize, yReverse, legendPointStyle, minYAxis, xTicksDecoration?, yTicksDecoration?) {
   return {
     maintainAspectRatio: false,
     responsive: true,
@@ -88,7 +91,8 @@ export function setChartOptions(title, xlabel, ylabel, yStepSize, yReverse, lege
             callback: (value, index, values) => {
               return value + xTicksDecoration;
             }
-          }
+          },
+          min: 1,
         },
       }],
       yAxes: [
@@ -110,7 +114,9 @@ export function setChartOptions(title, xlabel, ylabel, yStepSize, yReverse, lege
             },
             stepSize: yStepSize,
             fontSize: 15,
-            fontColor: '#000'
+            fontColor: '#000',
+            beginAtZero: false,
+            min: minYAxis
           },
           position: 'left',
         },
@@ -119,7 +125,7 @@ export function setChartOptions(title, xlabel, ylabel, yStepSize, yReverse, lege
   };
 }
 
-export function setMobileChartOptions(yStepSize, yReverse, legendPointStyle, yticksDecoration?) {
+export function setMobileChartOptions(yStepSize, yReverse, legendPointStyle, minYAxis, yticksDecoration?) {
   return {
     responsive: true,
     responsiveAnimationDuration: 3000,
@@ -156,7 +162,8 @@ export function setMobileChartOptions(yStepSize, yReverse, legendPointStyle, yti
           fontSize: 15,
           padding: 5,
           fontColor: '#000',
-          autoSkip: true
+          autoSkip: true,
+          min: 1,
         },
       }],
       yAxes: [
@@ -171,7 +178,9 @@ export function setMobileChartOptions(yStepSize, yReverse, legendPointStyle, yti
             },
             stepSize: yStepSize,
             fontSize: 15,
-            fontColor: '#000'
+            fontColor: '#000',
+            beginAtZero: false,
+            min: minYAxis
           },
           position: 'left',
         },
@@ -180,6 +189,71 @@ export function setMobileChartOptions(yStepSize, yReverse, legendPointStyle, yti
   };
 }
 
-export function setChartDataSet() {
+function round(value, precision) {
+  var multiplier = Math.pow(10, precision || 0);
+  return Math.round(value * multiplier) / multiplier;
+}
 
+export function getPercentage(valorReal, valorTotal) {
+  return round((valorReal * 100) / valorTotal, 1);
+}
+
+export function getAvg(count, valorTotal) {
+  return Math.round(count / valorTotal);
+}
+
+export function mapSeasons(temporadas: any[]) {
+  let sMapped = {
+    'season': null,
+    'eventsCount': null,
+  }
+  let year = 0;
+  let lastYearCount = 0;
+  let seasonsMapped = [];
+  temporadas.map(item => {
+    if (item.season != year) {
+      // console.log(item.season);
+      // console.log(temporadas.filter(itemf => itemf.season == item.season).length);
+      seasonsMapped.push({
+        'season': item.season,
+        'eventsCount': temporadas.filter(itemf => itemf.season == item.season).length
+      });
+      year = item.season;
+    }
+  });
+  return seasonsMapped;
+}
+
+export function mapPointsDistribution(results: any[]) {
+  let totalPoints = 0;
+  let teams = results.map(item => {
+    totalPoints += parseFloat(item.points);
+    return item.Constructors[0].constructorId;
+  });
+  teams = teams.filter((v, i) => teams.indexOf(v) === i);
+  let ppt;
+  ppt = teams.map(teamItem => {
+    return (results.filter(item => item.Constructors[0].constructorId === teamItem));
+  })
+  let pd = []
+  ppt.map(item => {
+    let pointsCounter = 0;
+    item.map((item2, index) => {
+      // console.log(item2.Constructors[0].name);
+      // console.log(item2.points);
+      pointsCounter += parseFloat(item2.points);
+      if (index === (item.length - 1))
+        pd.push({
+          'constructor': item2.Constructors[0],
+          'points': pointsCounter,
+          'percentage': getPercentage(pointsCounter, totalPoints),
+        });
+    })
+  });
+  return pd;
+}
+
+export function random_rgba() {
+  var o = Math.round, r = Math.random, s = 255;
+  return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
 }

@@ -239,10 +239,11 @@ export class ConstructorsService {
         fp: mapFinishingPositions(results),
         gp: mapGridPositions(results),
       }
+      console.log(retornable);
       subject.next(retornable);
     });
     return subject.asObservable();
-  }
+  };
 
   getDrivers(id: string) {
     let subject = new Subject();
@@ -355,7 +356,6 @@ export class ConstructorsService {
             });
           }
         });
-        console.log(events);
         subject.next(events);
       });
     return subject.asObservable();

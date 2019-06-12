@@ -26,9 +26,12 @@ import { ConstructorDetailComponent } from './components/constructor-detail/cons
 
 import { ChartsModule } from 'ng2-charts';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DriversIndexComponent } from './components/drivers-index/drivers-index.component';
 import { DriverDetailComponent } from './components/driver-detail/driver-detail.component';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SeasonsIndexComponent } from './components/seasons-index/seasons-index.component';
+import { SeasonDetailComponent } from './components/season-detail/season-detail.component';
 
 
 @NgModule({
@@ -44,7 +47,9 @@ import { DriverDetailComponent } from './components/driver-detail/driver-detail.
     ConstructorsIndexComponent,
     ConstructorDetailComponent,
     DriversIndexComponent,
-    DriverDetailComponent
+    DriverDetailComponent,
+    SeasonsIndexComponent,
+    SeasonDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +63,7 @@ import { DriverDetailComponent } from './components/driver-detail/driver-detail.
     }),
     ChartsModule,
     NgxSpinnerModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
