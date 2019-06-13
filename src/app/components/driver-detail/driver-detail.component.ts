@@ -111,6 +111,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.driverSelected = this.driversService.getDriver(this.parametro);
         this.driverSelected.subscribe(driver => {
           this.driverInfo = this.driversService.getInfo(driver);
+          this.driverInfo.subscribe(console.log);
           this.driverImage = this.driversService.getImage(driver);
         });
         this.stats = this.driversService.getStats(this.parametro);

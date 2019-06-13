@@ -65,7 +65,7 @@
           <td><a [routerLink]="['/pilotos', record.Results[0].Driver.driverId]">{{record.Results[0].Driver.givenName}}
               {{record.Results[0].Driver.familyName}}</a></td>
           <td><a
-              [routerLink]="['constructores', record.Results[0].Constructor.constructorId]">{{record.Results[0].Constructor.name}}</a>
+              [routerLink]="['/constructores', record.Results[0].Constructor.constructorId]">{{record.Results[0].Constructor.name}}</a>
           </td>
           <td>{{record.Results[0].laps}}</td>
           <td>{{record.Results[0].Time.time}}</td>
